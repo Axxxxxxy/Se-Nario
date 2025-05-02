@@ -14,7 +14,7 @@ try {
   throw err;
 }
 
-// 公式仕様：credentialsオブジェクトからクライアントを初期化
+// Dialogflowセッション初期化
 const sessionClient = new dialogflow.SessionsClient({ credentials });
 
 async function detectIntent(userText, sessionId) {
