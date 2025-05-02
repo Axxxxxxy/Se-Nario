@@ -1,1 +1,23 @@
+# Node.js 依存パッケージ
+node_modules/
+
+# 環境変数ファイル（APIキーなどを含む）
 .env
+
+# Dialogflow サービスアカウントの秘密鍵（JSON形式）
+credentials/
+*.json
+
+# Mac特有の隠しファイル
+.DS_Store
+
+# IDE/エディタの設定ファイル（任意で除外）
+.vscode/
+.idea/
+
+# ログファイル（将来的に）
+logs/
+*.log
+
+# ビルド結果（将来的にビルド処理を追加した場合）
+dist/
