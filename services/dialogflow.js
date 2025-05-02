@@ -1,40 +1,23 @@
 const dialogflow = require('@google-cloud/dialogflow');
-const config = require('../config');
+require('dotenv').config();
 
-let sessionClient;
+// .envから読み込んだJSONをパースし、改行を復元
+const raw = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
+if (!raw) throw new Error('❌ GOOGLE_APPLICATION_CREDENTIALS_JSON が未設定です');
+
 let credentials;
-
-// 環境変数からJSON文字列を安全に読み込み、セッションクライアントを初期化
-function initializeDialogflowClient() {
-  if (!config.dialogflow.credentialsJson) {
-    throw new Error('❌ Dialogflowの認証情報が設定されていません（GOOGLE_APPLICATION_CREDENTIALS_JSON）');
-  }
-
-  try {
-    credentials = JSON.parse(config.dialogflow.credentialsJson);
-    credentials.private_key = credentials.private_key.replace(/\\n/g, '\n');
-
-    sessionClient = new dialogflow.SessionsClient({
-      credentials: {
-        client_email: credentials.client_email,
-        private_key: credentials.private_key,
-      },
-      projectId: credentials.project_id,
-    });
-
-    console.log('✅ Dialogflow セッションクライアント初期化完了');
-  } catch (error) {
-    console.error('❌ 認証情報の読み込みに失敗しました:', error);
-    throw error;
-  }
+try {
+  credentials = JSON.parse(raw);
+  credentials.private_key = credentials.private_key.replace(/\\n/g, '\n');
+} catch (err) {
+  console.error('❌ 認証JSONのパースに失敗:', err);
+  throw err;
 }
 
-// ユーザーの入力をDialogflowに渡してIntent結果を取得
-async function detectIntent(text, sessionId) {
-  if (!sessionClient) {
-    initializeDialogflowClient();
-  }
+// 公式仕様：credentialsオブジェクトからクライアントを初期化
+const sessionClient = new dialogflow.SessionsClient({ credentials });
 
+async function detectIntent(userText, sessionId) {
   const sessionPath = sessionClient.projectAgentSessionPath(
     credentials.project_id,
     sessionId
@@ -44,8 +27,8 @@ async function detectIntent(text, sessionId) {
     session: sessionPath,
     queryInput: {
       text: {
-        text,
-        languageCode: config.dialogflow.languageCode,
+        text: userText,
+        languageCode: 'ja',
       },
     },
   };
@@ -61,11 +44,9 @@ async function detectIntent(text, sessionId) {
       responseText: result.fulfillmentText || '',
     };
   } catch (error) {
-    console.error('❌ Dialogflow detectIntent エラー:', error);
+    console.error('❌ detectIntent エラー:', error);
     throw error;
   }
 }
 
-module.exports = {
-  detectIntent,
-};
+module.exports = { detectIntent };
