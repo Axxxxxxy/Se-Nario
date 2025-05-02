@@ -6,7 +6,7 @@ node_modules/
 
 # Dialogflow サービスアカウントの秘密鍵（JSON形式）
 credentials/
-*.json
+
 
 # Mac特有の隠しファイル
 .DS_Store
