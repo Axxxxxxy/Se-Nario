@@ -1,3 +1,4 @@
+const { v4: uuidv4 } = require('uuid');
 const { Client } = require('@line/bot-sdk');
 const config = require('../config');
 const { detectIntent } = require('./dialogflow');
@@ -10,12 +11,15 @@ const lineClient = new Client({
 // ユーザーからのテキストメッセージを処理
 async function handleMessage(event) {
   const userMessage = event.message.text;
-  const userId = event.source.userId;
+
+  // 公式仕様に従い、毎回ランダムなセッションIDを生成
+  const sessionId = uuidv4();
 
   console.log('📩 受信メッセージ:', userMessage);
+  console.log('🆔 セッションID:', sessionId);
 
   try {
-    const result = await detectIntent(userMessage, userId);
+    const result = await detectIntent(userMessage, sessionId);
 
     const replyText = result.responseText || 'すみません、うまく理解できませんでした。';
 
