@@ -5,7 +5,7 @@ node_modules/
 .env
 
 # Dialogflow サービスアカウントの秘密鍵（JSON形式）
-
+dialogflow-linebot-20250502-dc8043d228e6.json
 
 # Mac特有の隠しファイル
 .DS_Store
