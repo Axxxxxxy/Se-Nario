@@ -1,8 +1,8 @@
-require('dotenv').config(); // .envからも読み込み可（Render環境でもOK）
+require('dotenv').config(); // .envからも読み込み可
 const dialogflow = require('@google-cloud/dialogflow');
 const { v4: uuidv4 } = require('uuid');
 
-// 認証JSONの読み取り（Render環境では環境変数から）
+// 認証JSONを環境変数から取得
 const raw = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
 if (!raw) throw new Error('❌ GOOGLE_APPLICATION_CREDENTIALS_JSON が未設定です');
 
@@ -15,17 +15,20 @@ try {
   throw err;
 }
 
-// 🔑 東京リージョン用のAPIエンドポイントを指定
+// プロジェクトIDとリージョン（デフォルトは東京）
+const projectId = credentials.project_id;
+const location = process.env.DIALOGFLOW_LOCATION || 'asia-northeast1';
+
+// セッションクライアント（東京リージョンのAPIエンドポイントを明示）
 const sessionClient = new dialogflow.SessionsClient({
   credentials,
-  apiEndpoint: 'asia-northeast1-dialogflow.googleapis.com', // ここが重要
+  projectId,
+  apiEndpoint: `${location}-dialogflow.googleapis.com`,
 });
 
 async function detectIntent(userText, sessionId = uuidv4()) {
-  const sessionPath = sessionClient.projectAgentSessionPath(
-    credentials.project_id,
-    sessionId
-  );
+  // ✅ 明示的にリージョン入りのセッションパスを指定
+  const sessionPath = `projects/${projectId}/locations/${location}/agent/sessions/${sessionId}`;
 
   const request = {
     session: sessionPath,
