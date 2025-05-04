@@ -3,8 +3,9 @@
 const express = require('express');
 const router = express.Router();
 
-const { detectIntent } = require('../services/dialogflowClient'); // ✅ 正しいパスと関数
+const { detectIntent } = require('../services/dialogflowClient'); // ✅ 修正済みパス
 
+// Dialogflow からの Webhook リクエストを処理
 router.post('/webhook', async (req, res) => {
   try {
     console.log('🧠 Dialogflow Webhook accessed!');
