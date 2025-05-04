@@ -5,10 +5,8 @@ const uuid = require('uuid');
 const fs = require('fs');
 const config = require('../config');
 
-// Render の Secret File を読み込むパス（config.js から取得）
+// Render の Secret ファイルパスを読み込み
 const credentialPath = config.dialogflow.credentialFile;
-
-// JSON 認証情報をパースして使う
 const credentials = JSON.parse(fs.readFileSync(credentialPath, 'utf8'));
 
 const sessionClient = new dialogflow.SessionsClient({

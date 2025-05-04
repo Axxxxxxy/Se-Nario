@@ -18,8 +18,8 @@ async function handleMessage(event) {
     const result = await detectIntent(userMessage, sessionId);
     console.log('🧠 Dialogflow応答:', result.responseText);
 
-    // 「返品」が含まれる場合、クイックリプライ表示
     if (userMessage.includes('返品')) {
+      // 「返品」というワードがあった場合はクイックリプライを返す
       await lineClient.replyMessage(event.replyToken, {
         type: 'text',
         text: '返品方法を選択してください：',
