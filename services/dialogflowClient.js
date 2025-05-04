@@ -1,30 +1,28 @@
-const dialogflow = require('@google-cloud/dialogflow');
-const uuid = require('uuid');
-const config = require('../config');
+// handlers/dialogflowHandler.js
 
-async function detectIntent(userMessage, sessionId) {
-  const sessionClient = new dialogflow.SessionsClient({
-    keyFilename: config.dialogflow.keyFilename,
-  });
+const express = require('express');
+const router = express.Router();
 
-  const sessionPath = sessionClient.projectAgentSessionPath(
-    config.dialogflow.projectId,
-    sessionId
-  );
+const { detectIntent } = require('../services/dialogflowClient'); // ✅ 修正済みパス
 
-  const request = {
-    session: sessionPath,
-    queryInput: {
-      text: { text: userMessage, languageCode: 'ja' },
-    },
-  };
+// Dialogflow からの Webhook リクエストを処理
+router.post('/webhook', async (req, res) => {
+  try {
+    console.log('🧠 Dialogflow Webhook accessed!');
+    const body = req.body;
+    const userMessage = body.queryResult.queryText;
+    const sessionId = body.session;
 
-  const responses = await sessionClient.detectIntent(request);
-  const result = responses[0].queryResult;
+    const result = await detectIntent(userMessage, sessionId);
+    const replyText = result.responseText || 'すみません、うまく理解できませんでした。';
 
-  return {
-    responseText: result.fulfillmentText,
-  };
-}
+    res.json({
+      fulfillmentText: replyText,
+    });
+  } catch (error) {
+    console.error('❌ Dialogflow webhook error:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
-module.exports = { detectIntent };
+module.exports = router;
