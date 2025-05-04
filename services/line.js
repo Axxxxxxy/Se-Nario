@@ -1,25 +1,64 @@
 // services/line.js
 
+const { v4: uuidv4 } = require('uuid');
 const { Client } = require('@line/bot-sdk');
 const config = require('../config');
+const { detectIntent } = require('./dialogflowClient');
 
 const lineClient = new Client({
   channelAccessToken: config.line.channelAccessToken,
   channelSecret: config.line.channelSecret,
 });
 
-// 現状では Dialogflow detectIntent を使わず、直接メッセージを返す最小構成
 async function handleMessage(event) {
-  const replyText = 'メッセージを受け取りました：' + event.message.text;
+  const userMessage = event.message.text;
+  const sessionId = uuidv4();
 
   try {
-    await lineClient.replyMessage(event.replyToken, {
-      type: 'text',
-      text: replyText,
-    });
-    console.log('✅ メッセージ送信成功:', replyText);
+    const result = await detectIntent(userMessage, sessionId);
+    console.log('🧠 Dialogflow応答:', result.responseText);
+
+    // もしキーワードに「返品」が含まれていたらクイックリプライを返す
+    if (userMessage.includes('返品')) {
+      await lineClient.replyMessage(event.replyToken, {
+        type: 'text',
+        text: '返品方法を選択してください：',
+        quickReply: {
+          items: [
+            {
+              type: 'action',
+              action: {
+                type: 'message',
+                label: 'オンラインストア',
+                text: 'オンラインストア',
+              },
+            },
+            {
+              type: 'action',
+              action: {
+                type: 'message',
+                label: '店舗',
+                text: '店舗',
+              },
+            },
+          ],
+        },
+      });
+    } else {
+      await lineClient.replyMessage(event.replyToken, {
+        type: 'text',
+        text: result.responseText || 'すみません、うまく理解できませんでした。',
+      });
+    }
+
+    console.log('✅ メッセージ送信完了');
   } catch (error) {
     console.error('❌ LINE返信中にエラー:', error);
+
+    await lineClient.replyMessage(event.replyToken, {
+      type: 'text',
+      text: 'エラーが発生しました。しばらくしてから再度お試しください。',
+    });
   }
 }
 
