@@ -1,18 +1,37 @@
-// handlers/dialogflowHandler.js
+// services/dialogflow.js
 
-const express = require('express');
-const router = express.Router(); // ← これがなかった！
+const { makeQuickReply, makeFlexMessage } = require('./line');
 
-const { handleTagBasedRouting } = require('../services/dialogflowService');
+// tag に応じて適切なLINEメッセージ形式を返す
+async function handleTagBasedRouting(body) {
+  const tag = body.fulfillmentInfo?.tag || ''; // Dialogflowから渡されたタグ
 
-router.post('/webhook', async (req, res) => {
-  try {
-    const response = await handleTagBasedRouting(req.body);
-    res.json(response);
-  } catch (error) {
-    console.error('✖ Dialogflow webhook error:', error);
-    res.status(500).send('Internal Server Error');
+  switch (tag) {
+    case 'show_return_options':
+      return makeQuickReply('返品方法を選択してください', [
+        { label: 'オンラインストア', text: 'オンラインストア' },
+        { label: '店舗', text: '店舗' },
+      ]);
+
+    case 'recommend_products':
+      return makeFlexMessage('おすすめ商品', [
+        { title: 'TシャツA', imageUrl: 'https://example.com/a.jpg', url: 'https://store.com/a' },
+        { title: 'TシャツB', imageUrl: 'https://example.com/b.jpg', url: 'https://store.com/b' }
+      ]);
+
+    default:
+      return {
+        fulfillment_response: {
+          messages: [
+            {
+              text: {
+                text: ['申し訳ありません、対応できませんでした。']
+              }
+            }
+          ]
+        }
+      };
   }
-});
+}
 
-module.exports = router;
+module.exports = { handleTagBasedRouting };
