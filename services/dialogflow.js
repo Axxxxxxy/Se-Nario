@@ -1,3 +1,6 @@
+const express = require('express');
+const router = express.Router();
+
 require('dotenv').config(); // .envからも読み込み可
 const dialogflow = require('@google-cloud/dialogflow');
 const { v4: uuidv4 } = require('uuid');
