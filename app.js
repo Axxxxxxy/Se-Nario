@@ -2,12 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { handleMessage } = require('./services/line');
 const config = require('./config');
-const dialogflowHandler = require('./handlers/dialogflowHandler'); // ← 追加
+const dialogflowHandler = require('./handlers/dialogflowHandler');
 
 const app = express();
 app.use(bodyParser.json());
 
-// LINE Webhookエンドポイント（Messaging APIから）
+// LINE Webhook受信
 app.post('/webhook', async (req, res) => {
   console.log('🔥 LINE Webhook accessed!');
   console.log('📨 受信データ:', JSON.stringify(req.body, null, 2));
@@ -33,10 +33,9 @@ app.post('/webhook', async (req, res) => {
   res.status(200).send('OK');
 });
 
-// Dialogflow Webhookエンドポイント（Dialogflow ES から）
-app.use('/dialogflow', dialogflowHandler); // ← 追加
+// Dialogflow Webhook受信用
+app.use('/dialogflow', dialogflowHandler);
 
-// ポート起動
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
