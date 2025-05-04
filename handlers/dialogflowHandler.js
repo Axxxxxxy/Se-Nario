@@ -3,14 +3,21 @@
 const express = require('express');
 const router = express.Router();
 
-const { handleTagBasedRouting } = require('../services/dialogflow'); // ← 正しいパス！
+const { detectIntent } = require('../services/dialogflowClient'); // ✅ 正しいパスと関数
 
-// Dialogflow からの Webhook リクエストを処理
 router.post('/webhook', async (req, res) => {
   try {
     console.log('🧠 Dialogflow Webhook accessed!');
-    const response = await handleTagBasedRouting(req.body);
-    res.json(response);
+    const body = req.body;
+    const userMessage = body.queryResult.queryText;
+    const sessionId = body.session;
+
+    const result = await detectIntent(userMessage, sessionId);
+    const replyText = result.responseText || 'すみません、うまく理解できませんでした。';
+
+    res.json({
+      fulfillmentText: replyText,
+    });
   } catch (error) {
     console.error('❌ Dialogflow webhook error:', error);
     res.status(500).send('Internal Server Error');
