@@ -1,37 +1,36 @@
-// services/dialogflow.js
+// services/dialogflowClient.js
 
-const { makeQuickReply, makeFlexMessage } = require('./line');
+const dialogflow = require('@google-cloud/dialogflow');
+const uuid = require('uuid');
+const config = require('../config');
 
-// tag に応じて適切なLINEメッセージ形式を返す
-async function handleTagBasedRouting(body) {
-  const tag = body.fulfillmentInfo?.tag || ''; // Dialogflowから渡されたタグ
+// Detect Intent を呼び出す処理
+async function detectIntent(text, sessionId) {
+  const sessionClient = new dialogflow.SessionsClient({
+    keyFilename: config.dialogflow.keyFilename,
+  });
 
-  switch (tag) {
-    case 'show_return_options':
-      return makeQuickReply('返品方法を選択してください', [
-        { label: 'オンラインストア', text: 'オンラインストア' },
-        { label: '店舗', text: '店舗' },
-      ]);
+  const sessionPath = sessionClient.projectAgentSessionPath(
+    config.dialogflow.projectId,
+    sessionId
+  );
 
-    case 'recommend_products':
-      return makeFlexMessage('おすすめ商品', [
-        { title: 'TシャツA', imageUrl: 'https://example.com/a.jpg', url: 'https://store.com/a' },
-        { title: 'TシャツB', imageUrl: 'https://example.com/b.jpg', url: 'https://store.com/b' }
-      ]);
+  const request = {
+    session: sessionPath,
+    queryInput: {
+      text: {
+        text,
+        languageCode: 'ja',
+      },
+    },
+  };
 
-    default:
-      return {
-        fulfillment_response: {
-          messages: [
-            {
-              text: {
-                text: ['申し訳ありません、対応できませんでした。']
-              }
-            }
-          ]
-        }
-      };
-  }
+  const responses = await sessionClient.detectIntent(request);
+  const result = responses[0].queryResult;
+
+  return {
+    responseText: result.fulfillmentText,
+  };
 }
 
-module.exports = { handleTagBasedRouting };
+module.exports = { detectIntent };
