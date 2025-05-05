@@ -23,7 +23,7 @@ module.exports = {
           },
           {
             type: 'text',
-            text: 'メニューをお選びください',
+            text: 'どちらでご購入いただいた商品ですか？',
             size: 'sm',
             color: '#888888',
             wrap: true,
