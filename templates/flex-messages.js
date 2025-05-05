@@ -7,10 +7,10 @@ const returnMenu = {
       contents: [
         {
           type: 'text',
-          text: '返品メニュー',
+          text: 'Brand Name',
           size: 'xl',
           weight: 'bold',
-          color: '#1DB446',
+          color: '#444444',
           wrap: true
         },
         {
@@ -36,7 +36,7 @@ const returnMenu = {
               color: '#00C851',
               action: {
                 type: 'message',
-                label: '店舗で返品',
+                label: '店舗',
                 text: '店舗'
               }
             },
@@ -46,7 +46,7 @@ const returnMenu = {
               color: '#00C851',
               action: {
                 type: 'message',
-                label: 'オンラインストアで返品',
+                label: 'オンラインストア',
                 text: 'オンラインストア'
               }
             }
@@ -65,10 +65,10 @@ const returnMenu = {
       contents: [
         {
           type: 'text',
-          text: 'オンライン返品ログイン',
+          text: 'Brand Name',
           size: 'xl',
           weight: 'bold',
-          color: '#1DB446',
+          color: '#444444',
           wrap: true
         },
         {
@@ -112,17 +112,35 @@ const returnMenu = {
       contents: [
         {
           type: 'text',
-          text: '店舗での返品について',
+          text: 'Brand Name',
           weight: 'bold',
           size: 'lg',
           wrap: true
         },
         {
           type: 'text',
-          text: '購入店舗へ商品とレシートをお持ちください。詳細は公式サイトをご確認ください。',
+          text: '店舗返品の詳細についてはこちらからご確認ください。',
           size: 'sm',
           wrap: true,
           margin: 'md'
+        },
+        {
+          type: 'box',
+          layout: 'vertical',
+          spacing: 'xl',
+          margin: 'xl',
+          contents: [
+            {
+              type: 'button',
+              style: 'primary',
+              color: '#00C851',
+              action: {
+                type: 'uri',
+                label: '店舗案内を見る',
+                uri: 'https://example.com/store-return'
+              }
+            }
+          ]
         }
       ]
     }
@@ -133,4 +151,5 @@ const returnMenu = {
     onlineStorePrompt,
     storeReturnGuide
   };
+  
   

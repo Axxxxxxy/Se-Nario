@@ -27,22 +27,17 @@ async function handleMessage(event) {
         });
       },
       'returns_online': async () => {
-        await replyMessage(replyToken, [
-          {
-            type: 'text',
-            text: 'オンライン返品にはログインが必要です。'
-          },
-          {
-            type: 'flex',
-            altText: 'ログインメニュー',
-            contents: flexMessages.onlineStorePrompt
-          }
-        ]);
+        await replyMessage(replyToken, {
+          type: 'flex',
+          altText: 'オンライン返品のご案内',
+          contents: flexMessages.onlineStorePrompt
+        });
       },
       'returns_store': async () => {
         await replyMessage(replyToken, {
-          type: 'text',
-          text: '店舗での返品については、最寄りの店舗情報をご確認ください。'
+          type: 'flex',
+          altText: '店舗での返品方法',
+          contents: flexMessages.storeReturnGuide
         });
       },
       'returns_possibility': async () => {
