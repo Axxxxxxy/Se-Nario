@@ -10,21 +10,16 @@ const lineClient = new Client({
   channelSecret: config.line.channelSecret,
 });
 
-// line.js内のhandleMessage関数を修正
 async function handleMessage(event) {
-    const userMessage = event.message.text;
-    // ユーザーIDをセッションIDとして使用
-    const sessionId = event.source.userId || uuidv4();
-    
-    try {
-      console.log('🔍 メッセージを受信:', userMessage);
-      console.log('👤 ユーザーID:', sessionId);
-      
-      const result = await detectIntent(userMessage, sessionId);
-      console.log('🧠 Dialogflow応答:', result.responseText);
+  const userMessage = event.message.text;
+  const sessionId = event.source.userId || uuidv4();
 
+  try {
+    console.log('🔍 メッセージを受信:', userMessage);
+    console.log('👤 ユーザーID:', sessionId);
+
+    // ✅ 先に「返品」を即時返信
     if (userMessage.includes('返品')) {
-      // 「返品」というワードがあった場合はクイックリプライを返す
       await lineClient.replyMessage(event.replyToken, {
         type: 'text',
         text: '返品方法を選択してください：',
@@ -49,21 +44,31 @@ async function handleMessage(event) {
           ],
         },
       });
-    } else {
-      await lineClient.replyMessage(event.replyToken, {
-        type: 'text',
-        text: result.responseText || 'すみません、うまく理解できませんでした。',
-      });
+      console.log('✅ クイックリプライ送信完了');
+      return; // ← これでDialogflow呼び出しをスキップ
     }
 
-    console.log('✅ メッセージ送信完了');
-  } catch (error) {
-    console.error('❌ LINE返信中にエラー:', error);
+    // 通常のDialogflow処理
+    const result = await detectIntent(userMessage, sessionId);
+    console.log('🧠 Dialogflow応答:', result.responseText);
 
     await lineClient.replyMessage(event.replyToken, {
       type: 'text',
-      text: 'エラーが発生しました。しばらくしてから再度お試しください。',
+      text: result.responseText || 'すみません、うまく理解できませんでした。',
     });
+
+    console.log('✅ 通常メッセージ送信完了');
+  } catch (error) {
+    console.error('❌ LINE返信中にエラー:', JSON.stringify(error.originalError?.response?.data || error, null, 2));
+
+    try {
+      await lineClient.replyMessage(event.replyToken, {
+        type: 'text',
+        text: 'エラーが発生しました。しばらくしてから再度お試しください。',
+      });
+    } catch (fallbackError) {
+      console.error('❌ フォールバックメッセージ送信失敗:', JSON.stringify(fallbackError, null, 2));
+    }
   }
 }
 
