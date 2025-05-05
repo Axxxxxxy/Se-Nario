@@ -2,7 +2,7 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const { handleMessage } = require('./services/line'); // ✅ dialogflowHandler削除、line.jsに統合
+const { handleMessage } = require('./services/line'); // ✅ Dialogflow処理を統合したline.js
 
 const app = express();
 const PORT = process.env.PORT || 3000;

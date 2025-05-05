@@ -6,11 +6,10 @@
  */
 
 const { detectIntent } = require('./dialogflowClient');
-const { replyMessage } = require('./line-client'); // ← 分離された送信モジュール
+const { replyMessage } = require('./line-client');
 const flexMessages = require('../templates/flex-messages');
 
 async function handleMessage(event) {
-  // 受信イベントがテキストメッセージ以外ならスキップ
   if (event.type !== 'message' || event.message.type !== 'text') return;
 
   const userMessage = event.message.text;
@@ -18,11 +17,9 @@ async function handleMessage(event) {
   const sessionId = event.source.userId;
 
   try {
-    // DialogflowからIntent判定結果を取得
     const result = await detectIntent(userMessage, sessionId);
     const intentName = result.intentName;
 
-    // Intent名に応じた応答処理の定義
     const intentHandlers = {
       'returns_request': async () => {
         await replyMessage(replyToken, {
@@ -45,7 +42,6 @@ async function handleMessage(event) {
       }
     };
 
-    // Intentが定義されていれば実行、それ以外はフォールバック
     if (intentHandlers[intentName]) {
       await intentHandlers[intentName]();
     } else {
@@ -56,7 +52,6 @@ async function handleMessage(event) {
     }
 
   } catch (err) {
-    // エラー時の共通応答処理
     console.error('Error handling message:', err);
     await replyMessage(replyToken, {
       type: 'text',
