@@ -1,5 +1,3 @@
-// templates/flex-messages.js
-
 module.exports = {
     returnMenu: {
       type: 'bubble',
@@ -23,11 +21,10 @@ module.exports = {
           },
           {
             type: 'text',
-            text: 'どちらでご購入いただいた商品ですか？',
+            text: '返品方法をお選びください',
             size: 'sm',
             color: '#888888',
-            wrap: true,
-            margin: 'none'
+            wrap: true
           },
           {
             type: 'separator',
@@ -90,8 +87,7 @@ module.exports = {
             text: 'ご注文を特定するため、以下のボタンからログインください',
             size: 'sm',
             color: '#888888',
-            wrap: true,
-            margin: 'none'
+            wrap: true
           },
           {
             type: 'separator',

@@ -5,7 +5,6 @@ const uuid = require('uuid');
 const fs = require('fs');
 const config = require('../config');
 
-// Render の Secret ファイルパスを読み込み
 const credentialPath = config.dialogflow.credentialFile;
 const credentials = JSON.parse(fs.readFileSync(credentialPath, 'utf8'));
 
@@ -14,7 +13,7 @@ const sessionClient = new dialogflow.SessionsClient({
     client_email: credentials.client_email,
     private_key: credentials.private_key,
   },
-  apiEndpoint: 'asia-northeast1-dialogflow.googleapis.com', // ✅ 東京リージョン用エンドポイント
+  apiEndpoint: 'asia-northeast1-dialogflow.googleapis.com',
 });
 
 const projectId = config.dialogflow.projectId;
@@ -37,6 +36,7 @@ async function detectIntent(text, sessionId = uuid.v4()) {
 
   return {
     responseText: result.fulfillmentText,
+    intentName: result.intent.displayName // ✅ intentName を返却
   };
 }
 

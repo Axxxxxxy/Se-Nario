@@ -1,60 +1,56 @@
-// services/line.js
-
-const { v4: uuidv4 } = require('uuid');
-const { Client } = require('@line/bot-sdk');
-const config = require('../config');
 const { detectIntent } = require('./dialogflowClient');
+const { replyMessage } = require('./line');
+const flexTemplates = require('./flex-messages');
 
-const lineClient = new Client({
-  channelAccessToken: config.line.channelAccessToken,
-  channelSecret: config.line.channelSecret,
-});
-
-// 🔁 replyMessage を個別関数として定義・エクスポート
-const replyMessage = async (token, messages) => {
-  return lineClient.replyMessage(token, Array.isArray(messages) ? messages : [messages]);
-};
-
-// 📩 LINEからのメッセージ受信処理
 async function handleMessage(event) {
+  if (event.type !== 'message' || event.message.type !== 'text') return;
+
   const userMessage = event.message.text;
-  const sessionId = event.source.userId || uuidv4();
+  const replyToken = event.replyToken;
+  const sessionId = event.source.userId;
 
   try {
-    console.log('🔍 メッセージを受信:', userMessage);
-    console.log('👤 ユーザーID:', sessionId);
-
-    // ✅ return-flow に処理を委譲
-    const { handleReturnFlow } = require('../handlers/return-flow');
-    const isHandled = await handleReturnFlow(event);
-    if (isHandled) return;
-
-    // 🧠 Dialogflow処理
     const result = await detectIntent(userMessage, sessionId);
-    console.log('🧠 Dialogflow応答:', result.responseText);
+    const intentName = result.intentName;
 
-    await replyMessage(event.replyToken, {
-      type: 'text',
-      text: result.responseText || 'すみません、うまく理解できませんでした。',
-    });
+    const intentHandlers = {
+      'returns_request': async () => {
+        await replyMessage(replyToken, {
+          type: 'flex',
+          altText: '返品メニュー',
+          contents: flexTemplates.returnMenu
+        });
+      },
+      'returns_online': async () => {
+        await replyMessage(replyToken, [
+          { type: 'text', text: 'オンライン返品にはログインが必要です。' },
+          flexTemplates.onlineStorePrompt
+        ]);
+      },
+      'returns_store': async () => {
+        await replyMessage(replyToken, {
+          type: 'text',
+          text: '店舗での返品については、最寄りの店舗情報をご確認ください。'
+        });
+      }
+    };
 
-    console.log('✅ 通常メッセージ送信完了');
-  } catch (error) {
-    console.error('❌ LINE返信中にエラー:', JSON.stringify(error.originalError?.response?.data || error, null, 2));
-
-    try {
-      await replyMessage(event.replyToken, {
+    if (intentHandlers[intentName]) {
+      await intentHandlers[intentName]();
+    } else {
+      // fallback
+      await replyMessage(replyToken, {
         type: 'text',
-        text: 'エラーが発生しました。しばらくしてから再度お試しください。',
+        text: '申し訳ありません、もう一度具体的に教えていただけますか？'
       });
-    } catch (fallbackError) {
-      console.error('❌ フォールバックメッセージ送信失敗:', JSON.stringify(fallbackError, null, 2));
     }
+  } catch (err) {
+    console.error('Error handling message:', err);
+    await replyMessage(replyToken, {
+      type: 'text',
+      text: 'エラーが発生しました。時間をおいて再度お試しください。'
+    });
   }
 }
 
-module.exports = {
-  lineClient,
-  handleMessage,
-  replyMessage // ✅ ここを忘れずにエクスポート
-};
+module.exports = { handleMessage };
