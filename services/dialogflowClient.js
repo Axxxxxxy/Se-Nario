@@ -10,11 +10,12 @@ const credentialPath = config.dialogflow.credentialFile;
 const credentials = JSON.parse(fs.readFileSync(credentialPath, 'utf8'));
 
 const sessionClient = new dialogflow.SessionsClient({
-  credentials: {
-    client_email: credentials.client_email,
-    private_key: credentials.private_key,
-  },
-});
+    credentials: {
+      client_email: credentials.client_email,
+      private_key: credentials.private_key,
+    },
+    apiEndpoint: 'asia-northeast1-dialogflow.googleapis.com', // 👈 これが重要！
+  });
 
 const projectId = config.dialogflow.projectId;
 
