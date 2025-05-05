@@ -16,6 +16,15 @@ async function handleReturnFlow(event) {
     return true;
   }
 
+  if (userText === 'オンラインストア') {
+    await replyMessage(replyToken, {
+      type: 'flex',
+      altText: 'オンラインストアログイン案内',
+      contents: flexTemplates.onlineStorePrompt
+    });
+    return true;
+  }
+
   return false;
 }
 
