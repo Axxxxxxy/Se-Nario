@@ -1,8 +1,16 @@
+// services/line.js
+
+/**
+ * DialogflowのIntentに応じてLINEへFlexメッセージまたはテキストを返信
+ * handleMessage: webhookイベントの処理を行うエントリポイント
+ */
+
 const { detectIntent } = require('./dialogflowClient');
-const { replyMessage } = require('./line');
+const { replyMessage } = require('./line-client'); // ← 分離された送信モジュール
 const flexMessages = require('../templates/flex-messages');
 
 async function handleMessage(event) {
+  // 受信イベントがテキストメッセージ以外ならスキップ
   if (event.type !== 'message' || event.message.type !== 'text') return;
 
   const userMessage = event.message.text;
@@ -10,21 +18,23 @@ async function handleMessage(event) {
   const sessionId = event.source.userId;
 
   try {
+    // DialogflowからIntent判定結果を取得
     const result = await detectIntent(userMessage, sessionId);
     const intentName = result.intentName;
 
+    // Intent名に応じた応答処理の定義
     const intentHandlers = {
       'returns_request': async () => {
         await replyMessage(replyToken, {
           type: 'flex',
           altText: '返品メニュー',
-          contents: flexTemplates.returnMenu
+          contents: flexMessages.returnMenu
         });
       },
       'returns_online': async () => {
         await replyMessage(replyToken, [
           { type: 'text', text: 'オンライン返品にはログインが必要です。' },
-          flexTemplates.onlineStorePrompt
+          flexMessages.onlineStorePrompt
         ]);
       },
       'returns_store': async () => {
@@ -35,16 +45,18 @@ async function handleMessage(event) {
       }
     };
 
+    // Intentが定義されていれば実行、それ以外はフォールバック
     if (intentHandlers[intentName]) {
       await intentHandlers[intentName]();
     } else {
-      // fallback
       await replyMessage(replyToken, {
         type: 'text',
         text: '申し訳ありません、もう一度具体的に教えていただけますか？'
       });
     }
+
   } catch (err) {
+    // エラー時の共通応答処理
     console.error('Error handling message:', err);
     await replyMessage(replyToken, {
       type: 'text',
