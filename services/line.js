@@ -10,13 +10,18 @@ const lineClient = new Client({
   channelSecret: config.line.channelSecret,
 });
 
+// line.js内のhandleMessage関数を修正
 async function handleMessage(event) {
-  const userMessage = event.message.text;
-  const sessionId = uuidv4();
-
-  try {
-    const result = await detectIntent(userMessage, sessionId);
-    console.log('🧠 Dialogflow応答:', result.responseText);
+    const userMessage = event.message.text;
+    // ユーザーIDをセッションIDとして使用
+    const sessionId = event.source.userId || uuidv4();
+    
+    try {
+      console.log('🔍 メッセージを受信:', userMessage);
+      console.log('👤 ユーザーID:', sessionId);
+      
+      const result = await detectIntent(userMessage, sessionId);
+      console.log('🧠 Dialogflow応答:', result.responseText);
 
     if (userMessage.includes('返品')) {
       // 「返品」というワードがあった場合はクイックリプライを返す
