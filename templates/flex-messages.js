@@ -109,18 +109,21 @@ const returnMenu = {
     body: {
       type: 'box',
       layout: 'vertical',
+      spacing: 'md',
       contents: [
         {
           type: 'text',
           text: 'Brand Name',
+          size: 'xl',
           weight: 'bold',
-          size: 'lg',
+          color: '#444444',
           wrap: true
         },
         {
           type: 'text',
           text: '返品・交換の理由を選択してください',
           size: 'sm',
+          color: '#888888',
           wrap: true,
           margin: 'md'
         },
@@ -176,8 +179,8 @@ const returnMenu = {
                 color: '#00C851',
                 action: {
                   type: 'message',
-                  label: 'オンラインストア',
-                  text: 'オンラインストア'
+                  label: 'その他',
+                  text: 'その他'
               }
             }
           ]
