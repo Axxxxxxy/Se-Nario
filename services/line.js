@@ -4,9 +4,6 @@ const { detectIntent } = require('./dialogflowClient');
 const { replyMessage } = require('./line-client');
 const flexMessages = require('../templates/flex-messages');
 
-/**
- * LINEから受信したテキストメッセージをDialogflowへ渡し、Intentごとに処理
- */
 async function handleMessage(event) {
   if (event.type !== 'message' || event.message.type !== 'text') return;
 
@@ -31,8 +28,15 @@ async function handleMessage(event) {
       },
       'returns_online': async () => {
         await replyMessage(replyToken, [
-          { type: 'text', text: 'オンライン返品にはログインが必要です。' },
-          flexMessages.onlineStorePrompt
+          {
+            type: 'text',
+            text: 'オンライン返品にはログインが必要です。'
+          },
+          {
+            type: 'flex',
+            altText: 'ログインメニュー',
+            contents: flexMessages.onlineStorePrompt
+          }
         ]);
       },
       'returns_store': async () => {
