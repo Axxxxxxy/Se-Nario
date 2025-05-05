@@ -1,6 +1,6 @@
 const { detectIntent } = require('./dialogflowClient');
 const { replyMessage } = require('./line');
-const flexTemplates = require('./flex-messages');
+const flexMessages = require('../templates/flex-messages');
 
 async function handleMessage(event) {
   if (event.type !== 'message' || event.message.type !== 'text') return;
