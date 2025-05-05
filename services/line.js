@@ -46,17 +46,11 @@ async function handleMessage(event) {
         });
       },
       'returns_possibility': async () => {
-        await replyMessage(replyToken, [
-          {
-            type: 'text',
-            text: '返品についてご案内いたします。以下から該当する方をお選びください。'
-          },
-          {
-            type: 'flex',
-            altText: '返品メニュー',
-            contents: flexMessages.returnMenu
-          }
-        ]);
+        await replyMessage(replyToken, {
+          type: 'flex',
+          altText: '返品メニュー',
+          contents: flexMessages.returnMenu
+        });
       }
     };
 
