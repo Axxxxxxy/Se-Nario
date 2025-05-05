@@ -1,9 +1,8 @@
-// services/line.js
-
 const { v4: uuidv4 } = require('uuid');
 const { Client } = require('@line/bot-sdk');
 const config = require('../config');
 const { detectIntent } = require('./dialogflowClient');
+const { handleReturnFlow } = require('../handlers/return-flow');
 
 const lineClient = new Client({
   channelAccessToken: config.line.channelAccessToken,
@@ -18,37 +17,11 @@ async function handleMessage(event) {
     console.log('🔍 メッセージを受信:', userMessage);
     console.log('👤 ユーザーID:', sessionId);
 
-    // ✅ 先に「返品」を即時返信
-    if (userMessage.includes('返品')) {
-      await lineClient.replyMessage(event.replyToken, {
-        type: 'text',
-        text: '返品方法を選択してください：',
-        quickReply: {
-          items: [
-            {
-              type: 'action',
-              action: {
-                type: 'message',
-                label: 'オンラインストア',
-                text: 'オンラインストア',
-              },
-            },
-            {
-              type: 'action',
-              action: {
-                type: 'message',
-                label: '店舗',
-                text: '店舗',
-              },
-            },
-          ],
-        },
-      });
-      console.log('✅ クイックリプライ送信完了');
-      return; // ← これでDialogflow呼び出しをスキップ
-    }
+    // ✅ 「返品」専用フロー（Flexメッセージ表示）
+    const isHandled = await handleReturnFlow(event);
+    if (isHandled) return;
 
-    // 通常のDialogflow処理
+    // 🧠 通常のDialogflow応答
     const result = await detectIntent(userMessage, sessionId);
     console.log('🧠 Dialogflow応答:', result.responseText);
 
