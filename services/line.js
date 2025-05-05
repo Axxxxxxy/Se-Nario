@@ -42,10 +42,17 @@ async function handleMessage(event) {
         });
       },
       'returns_possibility': async () => {
-        await replyMessage(replyToken, {
-          type: 'text',
-          text: '返品の可否についてですね。商品や状態によって異なりますので、いくつか質問させていただきます'
-        });
+        await replyMessage(replyToken, [
+          {
+            type: 'text',
+            text: '返品についてご案内いたします。以下から該当する方をお選びください。'
+          },
+          {
+            type: 'flex',
+            altText: '返品メニュー',
+            contents: flexMessages.returnMenu
+          }
+        ]);
       }
     };
 
