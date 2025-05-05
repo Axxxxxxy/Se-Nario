@@ -94,7 +94,7 @@ const returnMenu = {
               color: '#00C851',
               action: {
                 type: 'uri',
-                label: 'ログインする',
+                label: 'オンラインにログインする',
                 uri: 'https://example.com/login'
               }
             }
@@ -119,7 +119,7 @@ const returnMenu = {
         },
         {
           type: 'text',
-          text: '店舗返品の詳細についてはこちらからご確認ください。',
+          text: '返品・交換の理由を選択してください',
           size: 'sm',
           wrap: true,
           margin: 'md'
@@ -131,13 +131,53 @@ const returnMenu = {
           margin: 'xl',
           contents: [
             {
-              type: 'button',
-              style: 'primary',
-              color: '#00C851',
-              action: {
-                type: 'uri',
-                label: '店舗案内を見る',
-                uri: 'https://example.com/store-return'
+                type: 'button',
+                style: 'primary',
+                color: '#00C851',
+                action: {
+                  type: 'message',
+                  label: 'イメージと違った',
+                  text: 'イメージと違った'
+                }
+              },
+              {
+                type: 'button',
+                style: 'primary',
+                color: '#00C851',
+                action: {
+                  type: 'message',
+                  label: 'サイズが合わなかった',
+                  text: 'サイズが合わなかった'
+                }
+              },
+              {
+                type: 'button',
+                style: 'primary',
+                color: '#00C851',
+                action: {
+                  type: 'message',
+                  label: '不備不具合があった',
+                  text: '不備不具合があった'
+                }
+              },
+              {
+                type: 'button',
+                style: 'primary',
+                color: '#00C851',
+                action: {
+                  type: 'message',
+                  label: '間違えて購入した',
+                  text: '間違えて購入した'
+                }
+              },
+              {
+                type: 'button',
+                style: 'primary',
+                color: '#00C851',
+                action: {
+                  type: 'message',
+                  label: 'オンラインストア',
+                  text: 'オンラインストア'
               }
             }
           ]
