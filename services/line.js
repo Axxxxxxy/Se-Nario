@@ -1,14 +1,21 @@
+// services/line.js
+
 const { v4: uuidv4 } = require('uuid');
 const { Client } = require('@line/bot-sdk');
 const config = require('../config');
 const { detectIntent } = require('./dialogflowClient');
-const { handleReturnFlow } = require('../handlers/return-flow');
 
 const lineClient = new Client({
   channelAccessToken: config.line.channelAccessToken,
   channelSecret: config.line.channelSecret,
 });
 
+// 🔁 replyMessage を個別関数として定義・エクスポート
+const replyMessage = async (token, messages) => {
+  return lineClient.replyMessage(token, Array.isArray(messages) ? messages : [messages]);
+};
+
+// 📩 LINEからのメッセージ受信処理
 async function handleMessage(event) {
   const userMessage = event.message.text;
   const sessionId = event.source.userId || uuidv4();
@@ -17,15 +24,16 @@ async function handleMessage(event) {
     console.log('🔍 メッセージを受信:', userMessage);
     console.log('👤 ユーザーID:', sessionId);
 
-    // ✅ 「返品」専用フロー（Flexメッセージ表示）
+    // ✅ return-flow に処理を委譲
+    const { handleReturnFlow } = require('../handlers/return-flow');
     const isHandled = await handleReturnFlow(event);
     if (isHandled) return;
 
-    // 🧠 通常のDialogflow応答
+    // 🧠 Dialogflow処理
     const result = await detectIntent(userMessage, sessionId);
     console.log('🧠 Dialogflow応答:', result.responseText);
 
-    await lineClient.replyMessage(event.replyToken, {
+    await replyMessage(event.replyToken, {
       type: 'text',
       text: result.responseText || 'すみません、うまく理解できませんでした。',
     });
@@ -35,7 +43,7 @@ async function handleMessage(event) {
     console.error('❌ LINE返信中にエラー:', JSON.stringify(error.originalError?.response?.data || error, null, 2));
 
     try {
-      await lineClient.replyMessage(event.replyToken, {
+      await replyMessage(event.replyToken, {
         type: 'text',
         text: 'エラーが発生しました。しばらくしてから再度お試しください。',
       });
@@ -48,4 +56,5 @@ async function handleMessage(event) {
 module.exports = {
   lineClient,
   handleMessage,
+  replyMessage // ✅ ここを忘れずにエクスポート
 };
