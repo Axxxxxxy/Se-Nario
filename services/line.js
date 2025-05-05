@@ -1,14 +1,12 @@
 // services/line.js
 
-/**
- * DialogflowのIntentに応じてLINEへFlexメッセージまたはテキストを返信
- * handleMessage: webhookイベントの処理を行うエントリポイント
- */
-
 const { detectIntent } = require('./dialogflowClient');
 const { replyMessage } = require('./line-client');
 const flexMessages = require('../templates/flex-messages');
 
+/**
+ * LINEから受信したテキストメッセージをDialogflowへ渡し、Intentごとに処理
+ */
 async function handleMessage(event) {
   if (event.type !== 'message' || event.message.type !== 'text') return;
 
@@ -42,7 +40,7 @@ async function handleMessage(event) {
       }
     };
 
-    if (intentHandlers[intentName]) {
+    if (intentName && intentHandlers[intentName]) {
       await intentHandlers[intentName]();
     } else {
       await replyMessage(replyToken, {
@@ -52,7 +50,7 @@ async function handleMessage(event) {
     }
 
   } catch (err) {
-    console.error('Error handling message:', err);
+    console.error('❌ Error in handleMessage:', err);
     await replyMessage(replyToken, {
       type: 'text',
       text: 'エラーが発生しました。時間をおいて再度お試しください。'
