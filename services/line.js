@@ -18,6 +18,9 @@ async function handleMessage(event) {
     const result = await detectIntent(userMessage, sessionId);
     const intentName = result.intentName;
 
+    console.log('📝 ユーザー入力:', userMessage);
+    console.log('🎯 Dialogflow Intent名:', intentName);
+
     const intentHandlers = {
       'returns_request': async () => {
         await replyMessage(replyToken, {
@@ -36,6 +39,12 @@ async function handleMessage(event) {
         await replyMessage(replyToken, {
           type: 'text',
           text: '店舗での返品については、最寄りの店舗情報をご確認ください。'
+        });
+      },
+      'returns_possibility': async () => {
+        await replyMessage(replyToken, {
+          type: 'text',
+          text: '返品の可否についてですね。商品や状態によって異なりますので、いくつか質問させていただきます'
         });
       }
     };
