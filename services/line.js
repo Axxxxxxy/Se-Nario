@@ -33,26 +33,13 @@ async function handleMessage(event) {
           contents: flexMessages.onlineStorePrompt
         });
       },
-'returns_store': async () => {
-  await replyMessage(replyToken, {
-    type: 'text',
-    text:
-      '【店舗での返品について】\n\n' +
-      '以下をご確認の上、14日以内に商品とレシートをご持参ください。\n\n' +
-      '🔸返品条件\n' +
-      '・未使用・未着用\n' +
-      '・タグ・付属品あり\n' +
-      '・対象外：セール品、アクセ類、福袋、衛生用品\n\n' +
-      '🔸返金について\n' +
-      '・決済方法により異なります\n' +
-      '・不備がある場合はスタッフへ\n\n' +
-      '🔸持ち物チェック\n' +
-      '・商品\n' +
-      '・レシート or 購入証明\n' +
-      '・タグ・箱など付属品\n\n' +
-      'ご不明点は店舗スタッフまでお気軽にご相談ください。'
-  });
-},
+      'returns_store': async () => {
+        await replyMessage(replyToken, {
+          type: 'flex',
+          altText: '店舗の返品・交換について',
+          contents: flexMessages.returnStorePolicy
+        });
+      },
       'returns_possibility': async () => {
         await replyMessage(replyToken, {
           type: 'flex',

@@ -104,8 +104,211 @@ const returnMenu = {
     }
   };
   
+  const returnStorePolicy = {
+    "type": "bubble",
+    "size": "mega",
+    "body": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "text",
+          "text": "店舗の返品・交換について",
+          "weight": "bold",
+          "size": "lg",
+          "align": "center",
+          "margin": "xs"
+        },
+        {
+          "type": "text",
+          "text": "商品ご購入日から14日以内に、商品と購入証明をご持参ください。",
+          "wrap": true,
+          "size": "xs",
+          "margin": "lg"
+        },
+        {
+          "type": "separator",
+          "margin": "xl",
+          "color": "#DDDDDD"
+        },
+        {
+          "type": "text",
+          "text": "【返金について】",
+          "weight": "bold",
+          "size": "xs",
+          "margin": "lg"
+        },
+        {
+          "type": "box",
+          "layout": "baseline",
+          "contents": [
+            { "type": "text", "text": "・", "size": "xs" },
+            {
+              "type": "text",
+              "text": "決済方法により返金方法が異なります",
+              "size": "xs",
+              "wrap": true,
+              "flex": 18
+            }
+          ],
+          "spacing": "none",
+          "margin": "sm"
+        },
+        {
+          "type": "box",
+          "layout": "baseline",
+          "contents": [
+            { "type": "text", "text": "・", "size": "xs" },
+            {
+              "type": "text",
+              "text": "商品状態や不良の有無により対応方法が変わる場合があります",
+              "size": "xs",
+              "wrap": true,
+              "flex": 18
+            }
+          ],
+          "spacing": "none",
+          "margin": "sm"
+        },
+        {
+          "type": "text",
+          "text": "【お持ちいただくもの】",
+          "weight": "bold",
+          "size": "xs",
+          "margin": "lg"
+        },
+        {
+          "type": "box",
+          "layout": "baseline",
+          "contents": [
+            { "type": "text", "text": "・", "size": "xs" },
+            {
+              "type": "text",
+              "text": "返品、交換する対象商品",
+              "size": "xs",
+              "wrap": true,
+              "flex": 18
+            }
+          ],
+          "spacing": "none",
+          "margin": "sm"
+        },
+        {
+          "type": "box",
+          "layout": "baseline",
+          "contents": [
+            { "type": "text", "text": "・", "size": "xs" },
+            {
+              "type": "text",
+              "text": "購入時のレシート（紙または電子レシート）",
+              "size": "xs",
+              "wrap": true,
+              "flex": 18
+            }
+          ],
+          "spacing": "none",
+          "margin": "sm"
+        },
+        {
+          "type": "box",
+          "layout": "baseline",
+          "contents": [
+            { "type": "text", "text": "・", "size": "xs" },
+            {
+              "type": "text",
+              "text": "タグ、箱などの付属品",
+              "size": "xs",
+              "wrap": true,
+              "flex": 18
+            }
+          ],
+          "spacing": "none",
+          "margin": "sm"
+        },
+        {
+          "type": "text",
+          "text": "※注意事項",
+          "weight": "bold",
+          "size": "xs",
+          "margin": "lg"
+        },
+        {
+          "type": "box",
+          "layout": "baseline",
+          "contents": [
+            { "type": "text", "text": "・", "size": "xs" },
+            {
+              "type": "text",
+              "text": "一部商品は対象外になります",
+              "size": "xs",
+              "wrap": true,
+              "flex": 18
+            }
+          ],
+          "spacing": "none",
+          "margin": "sm"
+        },
+        {
+          "type": "box",
+          "layout": "baseline",
+          "contents": [
+            { "type": "text", "text": "・", "size": "xs" },
+            {
+              "type": "text",
+              "text": "返品前に以下のボタンより「返品・交換の条件」を必ずご確認ください",
+              "size": "xs",
+              "wrap": true,
+              "flex": 18,
+              "margin": "none"
+            }
+          ],
+          "spacing": "none",
+          "margin": "sm"
+        },
+        {
+          "type": "separator",
+          "margin": "xxl",
+          "color": "#DDDDDD"
+        },
+        {
+          "type": "button",
+          "action": {
+            "type": "uri",
+            "label": "返品・交換の条件はこちら",
+            "uri": "https://example.com/return-policy"
+          },
+          "style": "primary",
+          "color": "#1AC94F",
+          "height": "md",
+          "margin": "xxl"
+        },
+        {
+          "type": "button",
+          "action": {
+            "type": "uri",
+            "label": "お問い合わせはこちら",
+            "uri": "https://example.com/contact"
+          },
+          "style": "link",
+          "height": "sm",
+          "margin": "md",
+          "color": "#1AC94F"
+        }
+      ],
+      "paddingAll": "xl",
+      "backgroundColor": "#FFFFFF",
+      "spacing": "sm"
+    },
+    "styles": {
+      "body": {
+        "backgroundColor": "#FFFFFF"
+      }
+    }
+  };
+  
   module.exports = {
     returnMenu,
-    onlineStorePrompt
+    onlineStorePrompt,
+    returnStorePolicy
   };
   
