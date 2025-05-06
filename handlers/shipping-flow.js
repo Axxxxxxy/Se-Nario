@@ -1,32 +1,27 @@
-const { shippingFee } = require('../templates/shipping_fee');
-const { replyFlexMessage } = require('../services/line');
+// handlers/shipping-flow.js
+const shippingMessages = require('../templates/shipping_fee');
+const { replyMessage } = require('../services/line-client');
 
-/**
- * intentごとの個別ハンドラー
- */
-const intentHandlers = {
-  shipping_fee: async (event) => {
-    await replyFlexMessage(event.replyToken, shippingFee);
-  },
+async function handleShippingFlow(intentName, replyToken) {
+  const replies = {
+    'shipping_fee': shippingMessages,
+    // 将来的には以下のように拡張可能
+    // 'shipping_time': shippingTimeMessage,
+    // 'shipping_tracking': shippingTrackingMessage
+  };
 
-  // 例: delivery_time, tracking_info など将来追加可能
-};
-
-/**
- * 配送カテゴリのIntentを処理
- * @param {object} event - LINE webhook event
- * @param {string} intent - DialogflowからのIntent名
- */
-const handleShippingFlow = async (event, intent) => {
-  try {
-    if (intentHandlers[intent]) {
-      await intentHandlers[intent](event);
-    } else {
-      console.warn(`[ShippingFlow] 未対応のIntentが渡されました: ${intent}`);
-    }
-  } catch (error) {
-    console.error(`[ShippingFlow] 処理中にエラーが発生しました: ${error.message}`);
+  if (replies[intentName]) {
+    await replyMessage(replyToken, {
+      type: 'flex',
+      altText: '送料・配送に関するご案内',
+      contents: replies[intentName],
+    });
+  } else {
+    await replyMessage(replyToken, {
+      type: 'text',
+      text: '送料や配送に関するご案内が見つかりませんでした。'
+    });
   }
-};
+}
 
 module.exports = { handleShippingFlow };
