@@ -22,7 +22,7 @@ async function handleMessage(event) {
     }
 
     if (intentName?.startsWith('shipping_')) {
-      return await handleShippingFlow(event, intentName);
+      return await handleShippingFlow(intentName, replyToken);
     }
 
     // 該当Intentなし

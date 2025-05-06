@@ -1,4 +1,6 @@
-module.exports = {
+// templates/shipping_fee.js
+
+const returnMenu = {
   type: "bubble",
   size: "mega",
   body: {
@@ -108,3 +110,5 @@ module.exports = {
     }
   }
 };
+
+module.exports = shippingFee;
