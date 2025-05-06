@@ -1,6 +1,6 @@
 // templates/shipping_fee.js
 
-const returnMenu = {
+const shippingFee = {
   type: "bubble",
   size: "mega",
   body: {
@@ -111,4 +111,4 @@ const returnMenu = {
   }
 };
 
-module.exports = shippingFee;
+module.exports = shippingFee; // ← ✅ 正しい変数名をエクスポート
