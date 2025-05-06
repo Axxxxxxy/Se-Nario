@@ -3,6 +3,7 @@
 const { detectIntent } = require('./dialogflowClient');
 const { replyMessage } = require('./line-client');
 const flexMessages = require('../templates/flex-messages');
+const { handleReturnsIntent } = require('../handlers/returns-flow');
 
 async function handleMessage(event) {
   if (event.type !== 'message' || event.message.type !== 'text') return;
@@ -18,40 +19,9 @@ async function handleMessage(event) {
     console.log('📝 ユーザー入力:', userMessage);
     console.log('🎯 Dialogflow Intent名:', intentName);
 
-    const intentHandlers = {
-      'returns_request': async () => {
-        await replyMessage(replyToken, {
-          type: 'flex',
-          altText: '返品メニュー',
-          contents: flexMessages.returnMenu
-        });
-      },
-      'returns_online': async () => {
-        await replyMessage(replyToken, {
-          type: 'flex',
-          altText: 'オンライン返品のご案内',
-          contents: flexMessages.onlineStorePrompt
-        });
-      },
-      'returns_store': async () => {
-        await replyMessage(replyToken, {
-          type: 'flex',
-          altText: '店舗の返品・交換について',
-          contents: flexMessages.returnStorePolicy
-        });
-      },
-      'returns_possibility': async () => {
-        await replyMessage(replyToken, {
-          type: 'flex',
-          altText: '返品メニュー',
-          contents: flexMessages.returnMenu
-        });
-      }
-    };
-
-    if (intentName && intentHandlers[intentName]) {
-      await intentHandlers[intentName]();
-    } else {
+    if (intentName?.startsWith('returns_')) {
+        return await handleReturnsIntent(intentName, replyToken);
+      }else {
       await replyMessage(replyToken, {
         type: 'text',
         text: '申し訳ありません、もう一度具体的に教えていただけますか？'
