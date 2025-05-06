@@ -1,8 +1,7 @@
-// services/line.js
-
 const { detectIntent } = require('./dialogflowClient');
 const { replyMessage } = require('./line-client');
 const { handleReturnsIntent } = require('../handlers/returns-flow');
+const { handleShippingFlow } = require('../handlers/shipping-flow');
 
 async function handleMessage(event) {
   if (event.type !== 'message' || event.message.type !== 'text') return;
@@ -19,13 +18,18 @@ async function handleMessage(event) {
     console.log('🎯 Dialogflow Intent名:', intentName);
 
     if (intentName?.startsWith('returns_')) {
-        return await handleReturnsIntent(intentName, replyToken);
-      }else {
-      await replyMessage(replyToken, {
-        type: 'text',
-        text: '申し訳ありません、もう一度具体的に教えていただけますか？'
-      });
+      return await handleReturnsIntent(intentName, replyToken);
     }
+
+    if (intentName?.startsWith('shipping_')) {
+      return await handleShippingFlow(event, intentName);
+    }
+
+    // 該当Intentなし
+    await replyMessage(replyToken, {
+      type: 'text',
+      text: '申し訳ありません、もう一度具体的に教えていただけますか？'
+    });
 
   } catch (err) {
     console.error('❌ Error in handleMessage:', err);
